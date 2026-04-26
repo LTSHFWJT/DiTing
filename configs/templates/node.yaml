@@ -1,0 +1,52 @@
+node:
+  id: node-1
+  name: node-1
+  server_url: http://127.0.0.1:8000
+  plan_dir: .diting-node-plans
+  work_dir: .diting-node-work
+  lease_seconds: 300
+
+machinery:
+  # 可选值：noop、libvirt/kvm/qemu、virtualbox、hyperv。
+  # noop 只记录生命周期事件，不会控制真实 VM，适合开发自检。
+  backend: noop
+
+guest:
+  health_timeout: 60
+  poll_interval: 2
+  task_timeout_grace: 30
+
+capture:
+  enabled: false
+  tool: tcpdump
+  interface: null
+  extra_args: []
+
+machines:
+  - name: win10-01
+    platform: windows
+    os_version: "10"
+    arch: amd64
+    ip: 192.168.30.11
+    agent_port: 8765
+    backend: libvirt
+    vm_name: win10-01
+    snapshot: clean
+    interface: br-sbx
+    tags:
+      - office2019
+  - name: ubuntu-01
+    platform: linux
+    os_version: ubuntu22.04
+    arch: amd64
+    ip: 192.168.30.21
+    agent_port: 8765
+    backend: libvirt
+    vm_name: ubuntu-01
+    snapshot: clean
+    interface: br-sbx
+    tags: []
+
+security:
+  executes_samples_on_host: false
+  vm_only_execution: true

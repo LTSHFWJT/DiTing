@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}分析 {{ analysis.id }} - DiTing Sandbox{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>分析详情</h1>
+    <p><span class="mono">{{ analysis.id }}</span></p>
+  </div>
+  <div class="actions">
+    <form method="post" action="/analyses/{{ analysis.id }}/cancel">
+      <button class="button danger" type="submit">取消</button>
+    </form>
+    <form method="post" action="/analyses/{{ analysis.id }}/rerun">
+      <button class="button" type="submit">重跑</button>
+    </form>
+  </div>
+</section>
+
+<section class="metrics">
+  <div class="metric">
+    <span class="metric-label">状态</span>
+    <strong>{{ analysis.status }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">文件类型</span>
+    <strong>{{ analysis.identification.file_type }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">平台</span>
+    <strong>{{ analysis.identification.platforms | join(", ") }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">事件</span>
+    <strong>{{ report.behavior.summary.total_events or 0 }}</strong>
+  </div>
+</section>
+
+<section class="section">
+  <h2>目标</h2>
+  <dl class="kv">
+    <dt>文件名</dt><dd>{{ analysis.filename }}</dd>
+    <dt>大小</dt><dd>{{ analysis.size }}</dd>
+    <dt>SHA256</dt><dd class="mono break">{{ analysis.sha256 }}</dd>
+    <dt>存储键</dt><dd class="mono break">{{ analysis.sample_storage_key }}</dd>
+  </dl>
+</section>
+
+<section class="section">
+  <h2>任务</h2>
+  {% if tasks %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>平台</th>
+        <th>系统</th>
+        <th>状态</th>
+        <th>节点</th>
+        <th>机器</th>
+        <th>路由</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr>
+        <td>{{ task.id }}</td>
+        <td>{{ task.platform }}</td>
+        <td>{{ task.os_version or "-" }}</td>
+        <td><span class="status status-{{ task.status }}">{{ task.status }}</span></td>
+        <td class="mono">{{ task.node_id or "-" }}</td>
+        <td>{{ task.machine_id or "-" }}</td>
+        <td>{{ task.route }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">没有任务。</p>
+  {% endif %}
+</section>
+
+<section class="section two-col">
+  <div>
+    <h2>行为摘要</h2>
+    <dl class="kv compact">
+      <dt>总事件</dt><dd>{{ report.behavior.summary.total_events or 0 }}</dd>
+      <dt>进程事件</dt><dd>{{ report.behavior.summary.process_events or 0 }}</dd>
+      <dt>文件事件</dt><dd>{{ report.behavior.summary.file_events or 0 }}</dd>
+      <dt>注册表事件</dt><dd>{{ report.behavior.summary.registry_events or 0 }}</dd>
+      <dt>网络事件</dt><dd>{{ report.behavior.summary.network_events or 0 }}</dd>
+    </dl>
+  </div>
+  <div>
+    <h2>事件计数</h2>
+    {% if report.behavior.events_count %}
+    <table>
+      <thead><tr><th>事件</th><th>数量</th></tr></thead>
+      <tbody>
+        {% for name, count in report.behavior.events_count.items() %}
+        <tr><td class="mono">{{ name }}</td><td>{{ count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">暂无事件。</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>进程树</h2>
+  {% if report.behavior.process_tree %}
+  <table>
+    <thead><tr><th>PID</th><th>PPID</th><th>映像</th><th>命令行</th></tr></thead>
+    <tbody>
+      {% for process in report.behavior.process_tree %}
+      <tr>
+        <td>{{ process.pid or "-" }}</td>
+        <td>{{ process.ppid or "-" }}</td>
+        <td class="mono break">{{ process.image or "-" }}</td>
+        <td class="mono break">{{ process.command_line or "-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">暂无进程事件。</p>
+  {% endif %}
+</section>
+
+<section class="section">
+  <h2>网络连接</h2>
+  {% if report.network.connections %}
+  <table>
+    <thead><tr><th>事件</th><th>协议</th><th>目标</th><th>端口</th><th>进程</th></tr></thead>
+    <tbody>
+      {% for conn in report.network.connections %}
+      <tr>
+        <td class="mono">{{ conn.event }}</td>
+        <td>{{ conn.protocol or "-" }}</td>
+        <td class="mono">{{ conn.dst_ip or conn.domain or "-" }}</td>
+        <td>{{ conn.dst_port or "-" }}</td>
+        <td>{{ conn.process_id or "-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">暂无网络事件。</p>
+  {% endif %}
+</section>
+
+<section class="section">
+  <h2>工件</h2>
+  {% if artifacts %}
+  <table>
+    <thead><tr><th>名称</th><th>类型</th><th>大小</th><th>SHA256</th><th>下载</th></tr></thead>
+    <tbody>
+      {% for artifact in artifacts %}
+      <tr>
+        <td>{{ artifact.name }}</td>
+        <td>{{ artifact.type }}</td>
+        <td>{{ artifact.size }}</td>
+        <td class="mono clipped">{{ artifact.sha256 or "-" }}</td>
+        <td><a href="/api/v1/artifacts/{{ artifact.id }}">下载</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">暂无工件。</p>
+  {% endif %}
+</section>
+
+<section class="section">
+  <h2>静态识别 JSON</h2>
+  <pre>{{ analysis.identification | tojson }}</pre>
+</section>
+{% endblock %}

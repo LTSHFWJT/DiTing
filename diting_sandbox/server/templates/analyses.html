@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}分析列表 - DiTing Sandbox{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>分析列表</h1>
+    <p>按创建时间倒序展示最近提交的分析。</p>
+  </div>
+  <a class="button primary" href="/submit">提交样本</a>
+</section>
+
+<section class="section">
+  {% if analyses %}
+  <table>
+    <thead>
+      <tr>
+        <th>分析 ID</th>
+        <th>文件名</th>
+        <th>状态</th>
+        <th>类型</th>
+        <th>平台</th>
+        <th>创建时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for analysis in analyses %}
+      <tr>
+        <td><a class="mono" href="/analyses/{{ analysis.id }}">{{ analysis.id }}</a></td>
+        <td>{{ analysis.filename }}</td>
+        <td><span class="status status-{{ analysis.status }}">{{ analysis.status }}</span></td>
+        <td>{{ analysis.identification.file_type }}</td>
+        <td>{{ analysis.identification.platforms | join(", ") }}</td>
+        <td>{{ analysis.created_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">还没有分析任务。</p>
+  {% endif %}
+</section>
+
+<section class="pager">
+  {% if offset > 0 %}
+  <a class="button" href="/analyses?limit={{ limit }}&offset={{ offset - limit if offset > limit else 0 }}">上一页</a>
+  {% endif %}
+  {% if analyses | length == limit %}
+  <a class="button" href="/analyses?limit={{ limit }}&offset={{ offset + limit }}">下一页</a>
+  {% endif %}
+</section>
+{% endblock %}

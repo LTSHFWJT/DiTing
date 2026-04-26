@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>{% block title %}DiTing Sandbox{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/app.css') }}">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">DiTing Sandbox</a>
+      <nav class="nav">
+        <a href="/" class="{{ 'active' if active == 'dashboard' else '' }}">总览</a>
+        <a href="/submit" class="{{ 'active' if active == 'submit' else '' }}">提交样本</a>
+        <a href="/analyses" class="{{ 'active' if active == 'analyses' else '' }}">分析</a>
+        <a href="/nodes" class="{{ 'active' if active == 'nodes' else '' }}">节点</a>
+        <a href="/docs">API</a>
+      </nav>
+    </header>
+    <main class="page">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

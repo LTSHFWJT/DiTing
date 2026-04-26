@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}提交样本 - DiTing Sandbox{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>提交样本</h1>
+    <p>服务端只保存和静态识别样本，实际执行必须由分析虚拟机完成。</p>
+  </div>
+</section>
+
+{% if error %}
+<section class="alert error">{{ error }}</section>
+{% endif %}
+
+<section class="section narrow">
+  <form method="post" action="/submit" enctype="multipart/form-data" class="form-grid">
+    <label>
+      <span>样本文件</span>
+      <input type="file" name="file" required>
+    </label>
+
+    <label>
+      <span>超时秒数</span>
+      <input type="number" name="timeout" min="1" max="600" value="{{ default_timeout }}">
+    </label>
+
+    <label>
+      <span>网络路由</span>
+      <select name="route">
+        <option value="drop" {{ 'selected' if default_route == 'drop' else '' }}>drop</option>
+        <option value="internet" {{ 'selected' if default_route == 'internet' else '' }}>internet</option>
+        <option value="inetsim" {{ 'selected' if default_route == 'inetsim' else '' }}>inetsim</option>
+      </select>
+    </label>
+
+    <fieldset>
+      <legend>指定平台</legend>
+      <label class="check"><input type="checkbox" name="platforms" value="windows"> Windows</label>
+      <label class="check"><input type="checkbox" name="platforms" value="linux"> Linux</label>
+      <p class="hint">不选择时由只读静态识别自动判断。</p>
+    </fieldset>
+
+    <div class="form-actions">
+      <button class="button primary" type="submit">提交分析</button>
+      <a class="button" href="/analyses">查看分析列表</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+routes:
+  drop:
+    enabled: true
+    description: Default route. No internet access from analysis VMs.
+  internet:
+    enabled: false
+    interface: eth1
+    routing_table: main
+  inetsim:
+    enabled: false
+    server: 192.168.50.10
+  vpn:
+    enabled: false
+    providers: {}
+  socks5:
+    enabled: false
+    proxies: []

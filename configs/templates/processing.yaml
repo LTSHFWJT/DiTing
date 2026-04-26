@@ -1,0 +1,20 @@
+workers:
+  identification:
+    enabled: true
+    concurrency: 1
+  pre:
+    enabled: false
+    concurrency: 1
+  post:
+    enabled: false
+    concurrency: 1
+
+plugins:
+  yara:
+    enabled: false
+    rules_dir: yara
+  capa:
+    enabled: false
+  signatures:
+    enabled: false
+    directory: signatures

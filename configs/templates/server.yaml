@@ -1,0 +1,17 @@
+server:
+  host: 127.0.0.1
+  port: 8000
+  data_dir: .diting-data
+
+database:
+  engine: sqlite
+  path: .diting-data/metadata.sqlite3
+  wal: true
+
+storage:
+  backend: local
+  path: .diting-data/storage
+
+security:
+  vm_only_execution: true
+  allow_sample_execution_on_host: false

@@ -1,0 +1,24 @@
+limits:
+  max_timeout: 600
+  max_file_size: 4294967296
+  max_platforms: 4
+
+default:
+  timeout: 120
+  priority: 1
+  network:
+    route: drop
+  memory_dump: false
+  enforce_timeout: false
+
+platform:
+  fallback_platforms:
+    - windows
+    - linux
+  versions:
+    windows:
+      - "10"
+      - "11"
+    linux:
+      - ubuntu22.04
+      - ubuntu24.04

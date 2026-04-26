@@ -1,0 +1,27 @@
+[project]
+name = "diting-sandbox"
+version = "0.1.0"
+description = "First-version Windows/Linux VM-only sandbox service."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "python-multipart>=0.0.9",
+    "Jinja2>=3.1",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "httpx>=0.26",
+]
+
+[project.scripts]
+diting-api = "diting_sandbox.server.cli:main"
+diting-node-agent = "diting_sandbox.node_agent.cli:main"
+diting-guest-agent = "diting_sandbox.guest_agent.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

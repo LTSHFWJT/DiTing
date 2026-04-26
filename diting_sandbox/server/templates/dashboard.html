@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}总览 - DiTing Sandbox{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div>
+    <h1>沙箱总览</h1>
+    <p>当前控制面状态、最近分析和节点资源。</p>
+  </div>
+  <a class="button primary" href="/submit">提交样本</a>
+</section>
+
+<section class="metrics">
+  <div class="metric">
+    <span class="metric-label">最近分析</span>
+    <strong>{{ stats.analyses }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">排队任务</span>
+    <strong>{{ stats.queued }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">运行中任务</span>
+    <strong>{{ stats.running }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">已完成任务</span>
+    <strong>{{ stats.finished }}</strong>
+  </div>
+  <div class="metric">
+    <span class="metric-label">机器槽位</span>
+    <strong>{{ stats.machines }}</strong>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <h2>最近分析</h2>
+    <a href="/analyses">查看全部</a>
+  </div>
+  {% if analyses %}
+  <table>
+    <thead>
+      <tr>
+        <th>分析 ID</th>
+        <th>文件名</th>
+        <th>状态</th>
+        <th>大小</th>
+        <th>SHA256</th>
+        <th>创建时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for analysis in analyses %}
+      <tr>
+        <td><a class="mono" href="/analyses/{{ analysis.id }}">{{ analysis.id }}</a></td>
+        <td>{{ analysis.filename }}</td>
+        <td><span class="status status-{{ analysis.status }}">{{ analysis.status }}</span></td>
+        <td>{{ analysis.size }}</td>
+        <td class="mono clipped">{{ analysis.sha256 }}</td>
+        <td>{{ analysis.created_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">还没有分析任务。</p>
+  {% endif %}
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <h2>节点与机器</h2>
+    <a href="/nodes">查看节点</a>
+  </div>
+  {% if machines %}
+  <table>
+    <thead>
+      <tr>
+        <th>机器</th>
+        <th>节点</th>
+        <th>平台</th>
+        <th>系统</th>
+        <th>状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for machine in machines %}
+      <tr>
+        <td>{{ machine.name }}</td>
+        <td class="mono">{{ machine.node_id }}</td>
+        <td>{{ machine.platform }}</td>
+        <td>{{ machine.os_version or "-" }}</td>
+        <td><span class="status status-{{ machine.state }}">{{ machine.state }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">尚未注册分析节点。</p>
+  {% endif %}
+</section>
+{% endblock %}
